@@ -15,14 +15,14 @@ class IconProperty {
 class CheckBoxProperty {
   final MouseCursor? mouseCursor;
   final Color? activeColor;
-  final MaterialStateProperty<Color?>? fillColor;
+  final WidgetStateProperty<Color?>? fillColor;
   final Color? checkColor;
   final bool tristate;
   final MaterialTapTargetSize? materialTapTargetSize;
   final VisualDensity? visualDensity;
   final Color? focusColor;
   final Color? hoverColor;
-  final MaterialStateProperty<Color?>? overlayColor;
+  final WidgetStateProperty<Color?>? overlayColor;
   final double? splashRadius;
   final FocusNode? focusNode;
   final bool autofocus;
@@ -49,57 +49,56 @@ class CheckBoxProperty {
 }
 
 class DropDownTextField extends StatefulWidget {
-  const DropDownTextField(
-      {Key? key,
-      this.controller,
-      this.initialValue,
-      required this.dropDownList,
-      this.padding,
-      this.textStyle,
-      this.onChanged,
-      this.validator,
-      this.isEnabled = true,
-      this.enableSearch = false,
-      this.readOnly = true,
-      this.dropdownRadius = 12,
-      this.textFieldDecoration,
-      this.dropDownIconProperty,
-      this.dropDownItemCount = 6,
-      this.searchFocusNode,
-      this.textFieldFocusNode,
-      this.searchAutofocus = false,
-      this.searchDecoration,
-      this.searchShowCursor,
-      this.searchKeyboardType,
-      this.listSpace = 0,
-      this.clearOption = true,
-      this.clearIconProperty,
-      this.listPadding,
-      this.listTextStyle,
-      this.keyboardType,
-      this.autovalidateMode})
-      : assert(
-          !(initialValue != null && controller != null),
-          "you cannot add both initialValue and singleController,\nset initial value using controller \n\tEg: SingleValueDropDownController(data:initial value) ",
-        ),
-        assert(!(!readOnly && enableSearch),
-            "readOnly!=true or enableSearch=true both condition does not work"),
-        assert(
-          !(controller != null &&
-              !(controller is SingleValueDropDownController)),
-          "controller must be type of SingleValueDropDownController",
-        ),
-        checkBoxProperty = null,
-        isMultiSelection = false,
-        singleController = controller,
-        multiController = null,
-        displayCompleteItem = false,
-        submitButtonColor = null,
-        submitButtonText = null,
-        submitButtonTextStyle = null,
-        super(key: key);
+  const DropDownTextField({
+    super.key,
+    this.controller,
+    this.initialValue,
+    required this.dropDownList,
+    this.padding,
+    this.textStyle,
+    this.onChanged,
+    this.validator,
+    this.isEnabled = true,
+    this.enableSearch = false,
+    this.readOnly = true,
+    this.dropdownRadius = 12,
+    this.textFieldDecoration,
+    this.dropDownIconProperty,
+    this.dropDownItemCount = 6,
+    this.searchFocusNode,
+    this.textFieldFocusNode,
+    this.searchAutofocus = false,
+    this.searchDecoration,
+    this.searchShowCursor,
+    this.searchKeyboardType,
+    this.listSpace = 0,
+    this.clearOption = true,
+    this.clearIconProperty,
+    this.listPadding,
+    this.listTextStyle,
+    this.keyboardType,
+    this.autovalidateMode})
+    : assert(
+        !(initialValue != null && controller != null),
+        "you cannot add both initialValue and singleController,\nset initial value using controller \n\tEg: SingleValueDropDownController(data:initial value) ",
+      ),
+      assert(!(!readOnly && enableSearch),
+          "readOnly!=true or enableSearch=true both condition does not work"),
+      assert(
+        !(controller != null &&
+            controller is! SingleValueDropDownController),
+        "controller must be type of SingleValueDropDownController",
+      ),
+      checkBoxProperty = null,
+      isMultiSelection = false,
+      singleController = controller,
+      multiController = null,
+      displayCompleteItem = false,
+      submitButtonColor = null,
+      submitButtonText = null,
+      submitButtonTextStyle = null;
   const DropDownTextField.multiSelection(
-      {Key? key,
+      {super.key,
       this.controller,
       this.displayCompleteItem = false,
       this.initialValue,
@@ -129,7 +128,7 @@ class DropDownTextField extends StatefulWidget {
             "you cannot add both initialValue and multiController\nset initial value using controller\n\tMultiValueDropDownController(data:initial value)"),
         assert(
           !(controller != null &&
-              !(controller is MultiValueDropDownController)),
+              controller is! MultiValueDropDownController),
           "controller must be type of MultiValueDropDownController",
         ),
         multiController = controller,
@@ -141,9 +140,7 @@ class DropDownTextField extends StatefulWidget {
         searchShowCursor = null,
         singleController = null,
         searchDecoration = null,
-        keyboardType = null,
-        // keyboardHeight = 0,
-        super(key: key);
+        keyboardType = null;
 
   ///single and multiple dropdown controller.
   ///It must be type of SingleValueDropDownController or MultiValueDropDownController.
@@ -245,10 +242,10 @@ class DropDownTextField extends StatefulWidget {
   final CheckBoxProperty? checkBoxProperty;
 
   @override
-  _DropDownTextFieldState createState() => _DropDownTextFieldState();
+  DropDownTextFieldState createState() => DropDownTextFieldState();
 }
 
-class _DropDownTextFieldState extends State<DropDownTextField>
+class DropDownTextFieldState extends State<DropDownTextField>
     with TickerProviderStateMixin {
   static final Animatable<double> _easeInTween =
       CurveTween(curve: Curves.easeIn);
@@ -445,7 +442,7 @@ class _DropDownTextFieldState extends State<DropDownTextField>
       }
 
       _listTileTextStyle =
-          (widget.listTextStyle ?? Theme.of(context).textTheme.subtitle1)!;
+          (widget.listTextStyle ?? Theme.of(context).textTheme.titleMedium)!;
       _listTileHeight =
           _textWidgetSize("dummy Text", _listTileTextStyle).height +
               _listPadding.top +
@@ -665,7 +662,7 @@ class _DropDownTextFieldState extends State<DropDownTextField>
                 builder: buildOverlay,
               ))),
     );
-    overlay?.insert(_isScrollPadding ? _entry2! : _entry!);
+    overlay.insert(_isScrollPadding ? _entry2! : _entry!);
   }
 
   _openOutSideClickOverlay(BuildContext context) {
@@ -683,7 +680,7 @@ class _DropDownTextFieldState extends State<DropDownTextField>
         ),
       );
     });
-    overlay2?.insert(_barrierOverlay!);
+    overlay2.insert(_barrierOverlay!);
   }
 
   void hideOverlay() {
@@ -864,7 +861,7 @@ class _DropDownTextFieldState extends State<DropDownTextField>
 
 class SingleSelection extends StatefulWidget {
   const SingleSelection(
-      {Key? key,
+      {super.key,
       required this.dropDownList,
       required this.onChanged,
       required this.height,
@@ -883,8 +880,7 @@ class SingleSelection extends StatefulWidget {
       this.listTextStyle,
       this.searchDecoration,
       required this.listPadding,
-      this.clearIconProperty})
-      : super(key: key);
+      this.clearIconProperty});
   final List<DropDownValueModel> dropDownList;
   final ValueSetter onChanged;
   final double height;
@@ -930,7 +926,7 @@ class _SingleSelectionState extends State<SingleSelection> {
   @override
   void initState() {
     _focusScopeNode = FocusScopeNode();
-    _inpDec = widget.searchDecoration ?? InputDecoration();
+    _inpDec = widget.searchDecoration ?? const InputDecoration();
     if (widget.searchAutofocus) {
       widget.searchFocusNode.requestFocus();
     }
@@ -1042,7 +1038,7 @@ class _SingleSelectionState extends State<SingleSelection> {
 
 class MultiSelection extends StatefulWidget {
   const MultiSelection(
-      {Key? key,
+      {super.key,
       required this.onChanged,
       required this.dropDownList,
       required this.list,
@@ -1053,8 +1049,7 @@ class MultiSelection extends StatefulWidget {
       required this.listTileHeight,
       required this.listPadding,
       this.listTextStyle,
-      this.checkBoxProperty})
-      : super(key: key);
+      this.checkBoxProperty});
   final List<DropDownValueModel> dropDownList;
   final ValueSetter onChanged;
   final List<bool> list;
@@ -1068,10 +1063,10 @@ class MultiSelection extends StatefulWidget {
   final CheckBoxProperty? checkBoxProperty;
 
   @override
-  _MultiSelectionState createState() => _MultiSelectionState();
+  MultiSelectionState createState() => MultiSelectionState();
 }
 
-class _MultiSelectionState extends State<MultiSelection> {
+class MultiSelectionState extends State<MultiSelection> {
   List<bool> multiSelectionValue = [];
 
   @override
@@ -1199,7 +1194,7 @@ class DropDownValueModel extends Equatable {
   final String name;
   final dynamic value;
 
-  ///as of now only added for multiselection dropdown
+  ///as of now only added for multi-selection dropdown
   final String? toolTipMsg;
 
   const DropDownValueModel(
@@ -1275,15 +1270,15 @@ class KeyboardVisibilityBuilder extends StatefulWidget {
     bool isKeyboardVisible,
   ) builder;
   const KeyboardVisibilityBuilder({
-    Key? key,
+    super.key,
     required this.builder,
-  }) : super(key: key);
+  });
   @override
-  _KeyboardVisibilityBuilderState createState() =>
-      _KeyboardVisibilityBuilderState();
+  KeyboardVisibilityBuilderState createState() =>
+      KeyboardVisibilityBuilderState();
 }
 
-class _KeyboardVisibilityBuilderState extends State<KeyboardVisibilityBuilder>
+class KeyboardVisibilityBuilderState extends State<KeyboardVisibilityBuilder>
     with WidgetsBindingObserver {
   var _isKeyboardVisible = false;
   @override
@@ -1300,7 +1295,7 @@ class _KeyboardVisibilityBuilderState extends State<KeyboardVisibilityBuilder>
 
   @override
   void didChangeMetrics() {
-    final bottomInset = WidgetsBinding.instance.window.viewInsets.bottom;
+    final bottomInset = View.of(context).viewInsets.bottom;
     final newValue = bottomInset > 0.0;
     if (newValue != _isKeyboardVisible) {
       setState(() {
