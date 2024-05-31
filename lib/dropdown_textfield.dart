@@ -77,8 +77,9 @@ class DropDownTextField extends StatefulWidget {
     this.listPadding,
     this.listTextStyle,
     this.keyboardType,
-    this.autovalidateMode})
-    : assert(
+    this.autovalidateMode,
+    this.dropdownColor,
+  }) : assert(
         !(initialValue != null && controller != null),
         "you cannot add both initialValue and singleController,\nset initial value using controller \n\tEg: SingleValueDropDownController(data:initial value) ",
       ),
@@ -97,34 +98,35 @@ class DropDownTextField extends StatefulWidget {
       submitButtonColor = null,
       submitButtonText = null,
       submitButtonTextStyle = null;
-  const DropDownTextField.multiSelection(
-      {super.key,
-      this.controller,
-      this.displayCompleteItem = false,
-      this.initialValue,
-      required this.dropDownList,
-      this.padding,
-      this.textStyle,
-      this.onChanged,
-      this.validator,
-      this.isEnabled = true,
-      this.dropdownRadius = 12,
-      this.dropDownIconProperty,
-      this.textFieldDecoration,
-      this.dropDownItemCount = 6,
-      this.searchFocusNode,
-      this.textFieldFocusNode,
-      this.listSpace = 0,
-      this.clearOption = true,
-      this.clearIconProperty,
-      this.submitButtonColor,
-      this.submitButtonText,
-      this.submitButtonTextStyle,
-      this.listPadding,
-      this.listTextStyle,
-      this.checkBoxProperty,
-      this.autovalidateMode})
-      : assert(initialValue == null || controller == null,
+  const DropDownTextField.multiSelection({
+    super.key,
+    this.controller,
+    this.displayCompleteItem = false,
+    this.initialValue,
+    required this.dropDownList,
+    this.padding,
+    this.textStyle,
+    this.onChanged,
+    this.validator,
+    this.isEnabled = true,
+    this.dropdownRadius = 12,
+    this.dropDownIconProperty,
+    this.textFieldDecoration,
+    this.dropDownItemCount = 6,
+    this.searchFocusNode,
+    this.textFieldFocusNode,
+    this.listSpace = 0,
+    this.clearOption = true,
+    this.clearIconProperty,
+    this.submitButtonColor,
+    this.submitButtonText,
+    this.submitButtonTextStyle,
+    this.listPadding,
+    this.listTextStyle,
+    this.checkBoxProperty,
+    this.autovalidateMode,
+    this.dropdownColor,
+  }) : assert(initialValue == null || controller == null,
             "you cannot add both initialValue and multiController\nset initial value using controller\n\tMultiValueDropDownController(data:initial value)"),
         assert(
           !(controller != null &&
@@ -240,6 +242,9 @@ class DropDownTextField extends StatefulWidget {
 
   ///customize checkbox property
   final CheckBoxProperty? checkBoxProperty;
+
+  ///set dropdown overlay color
+  final Color? dropdownColor;
 
   @override
   DropDownTextFieldState createState() => DropDownTextFieldState();
@@ -449,14 +454,13 @@ class DropDownTextFieldState extends State<DropDownTextField>
               _listPadding.bottom;
       _maxListItem = widget.dropDownItemCount;
 
-      _height = (!widget.isMultiSelection
-              ? (_dropDownList.length < _maxListItem
-                  ? _dropDownList.length * _listTileHeight
-                  : _listTileHeight * _maxListItem.toDouble())
-              : _dropDownList.length < _maxListItem
-                  ? _dropDownList.length * _listTileHeight
-                  : _listTileHeight * _maxListItem.toDouble()) +
-          10;
+      _height = !widget.isMultiSelection
+          ? (_dropDownList.length < _maxListItem
+              ? _dropDownList.length * _listTileHeight
+              : _listTileHeight * _maxListItem.toDouble())
+          : _dropDownList.length < _maxListItem
+              ? _dropDownList.length * _listTileHeight
+              : _listTileHeight * _maxListItem.toDouble();
     });
   }
 
@@ -746,17 +750,12 @@ class DropDownTextFieldState extends State<DropDownTextField>
           color: Colors.transparent,
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 5),
-            child: Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
+            child: Card(
+              elevation: 5,
+              color: widget.dropdownColor,
+              shape: RoundedRectangleBorder(
                 borderRadius:
                     BorderRadius.all(Radius.circular(widget.dropdownRadius)),
-                boxShadow: const [
-                  BoxShadow(
-                    color: Colors.grey,
-                    blurRadius: 5,
-                  ),
-                ],
               ),
               child: !widget.isMultiSelection
                   ? SingleSelection(
@@ -860,27 +859,29 @@ class DropDownTextFieldState extends State<DropDownTextField>
 }
 
 class SingleSelection extends StatefulWidget {
-  const SingleSelection(
-      {super.key,
-      required this.dropDownList,
-      required this.onChanged,
-      required this.height,
-      required this.enableSearch,
-      required this.searchHeight,
-      required this.searchFocusNode,
-      required this.mainFocusNode,
-      this.searchKeyboardType,
-      required this.searchAutofocus,
-      this.searchShowCursor,
-      required this.mainController,
-      required this.autoSort,
-      required this.listTileHeight,
-      this.onSearchTap,
-      this.onSearchSubmit,
-      this.listTextStyle,
-      this.searchDecoration,
-      required this.listPadding,
-      this.clearIconProperty});
+  const SingleSelection({
+    super.key,
+    required this.dropDownList,
+    required this.onChanged,
+    required this.height,
+    required this.enableSearch,
+    required this.searchHeight,
+    required this.searchFocusNode,
+    required this.mainFocusNode,
+    this.searchKeyboardType,
+    required this.searchAutofocus,
+    this.searchShowCursor,
+    required this.mainController,
+    required this.autoSort,
+    required this.listTileHeight,
+    this.onSearchTap,
+    this.onSearchSubmit,
+    this.listTextStyle,
+    this.searchDecoration,
+    required this.listPadding,
+    this.clearIconProperty,
+  });
+
   final List<DropDownValueModel> dropDownList;
   final ValueSetter onChanged;
   final double height;
@@ -910,6 +911,7 @@ class _SingleSelectionState extends State<SingleSelection> {
   late TextEditingController _searchCnt;
   late FocusScopeNode _focusScopeNode;
   late InputDecoration _inpDec;
+
   onItemChanged(String value) {
     setState(() {
       if (value.isEmpty) {
@@ -1037,19 +1039,21 @@ class _SingleSelectionState extends State<SingleSelection> {
 }
 
 class MultiSelection extends StatefulWidget {
-  const MultiSelection(
-      {super.key,
-      required this.onChanged,
-      required this.dropDownList,
-      required this.list,
-      required this.height,
-      this.buttonColor,
-      this.buttonText,
-      this.buttonTextStyle,
-      required this.listTileHeight,
-      required this.listPadding,
-      this.listTextStyle,
-      this.checkBoxProperty});
+  const MultiSelection({
+    super.key,
+    required this.onChanged,
+    required this.dropDownList,
+    required this.list,
+    required this.height,
+    this.buttonColor,
+    this.buttonText,
+    this.buttonTextStyle,
+    required this.listTileHeight,
+    required this.listPadding,
+    this.listTextStyle,
+    this.checkBoxProperty,
+  });
+
   final List<DropDownValueModel> dropDownList;
   final ValueSetter onChanged;
   final List<bool> list;
@@ -1083,70 +1087,81 @@ class MultiSelectionState extends State<MultiSelection> {
           height: widget.height,
           child: Scrollbar(
             child: ListView.builder(
-                padding: EdgeInsets.zero,
+                padding: const EdgeInsets.only(right: 15),
                 itemCount: widget.dropDownList.length,
                 itemBuilder: (BuildContext context, int index) {
-                  return SizedBox(
-                    height: widget.listTileHeight,
-                    child: Padding(
-                      padding: EdgeInsets.only(
-                          bottom: widget.listPadding.bottom,
-                          top: widget.listPadding.top),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 10),
-                              child: Align(
-                                alignment: Alignment.centerLeft,
-                                child: Row(
-                                  children: [
-                                    Expanded(
-                                      child: Text(
-                                          widget.dropDownList[index].name,
-                                          style: widget.listTextStyle),
-                                    ),
-                                    if (widget.dropDownList[index].toolTipMsg !=
-                                        null)
-                                      ToolTipWidget(
-                                          msg: widget
-                                              .dropDownList[index].toolTipMsg!)
-                                  ],
+                  return InkWell(
+                    onTap: () {
+                      setState(() {
+                        multiSelectionValue[index] =
+                            !multiSelectionValue[index];
+                      });
+                    },
+                    child: SizedBox(
+                      height: widget.listTileHeight,
+                      child: Padding(
+                        padding: EdgeInsets.only(
+                            bottom: widget.listPadding.bottom,
+                            top: widget.listPadding.top),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 10),
+                                child: Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Row(
+                                    children: [
+                                      Expanded(
+                                        child: Text(
+                                            widget.dropDownList[index].name,
+                                            style: widget.listTextStyle),
+                                      ),
+                                      if (widget
+                                              .dropDownList[index].toolTipMsg !=
+                                          null)
+                                        ToolTipWidget(
+                                            msg: widget.dropDownList[index]
+                                                .toolTipMsg!)
+                                    ],
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                          Checkbox(
-                            value: multiSelectionValue[index],
-                            onChanged: (value) {
-                              if (value != null) {
-                                setState(() {
-                                  multiSelectionValue[index] = value;
-                                });
-                              }
-                            },
-                            tristate:
-                                widget.checkBoxProperty?.tristate ?? false,
-                            mouseCursor: widget.checkBoxProperty?.mouseCursor,
-                            activeColor: widget.checkBoxProperty?.activeColor,
-                            fillColor: widget.checkBoxProperty?.fillColor,
-                            checkColor: widget.checkBoxProperty?.checkColor,
-                            focusColor: widget.checkBoxProperty?.focusColor,
-                            hoverColor: widget.checkBoxProperty?.hoverColor,
-                            overlayColor: widget.checkBoxProperty?.overlayColor,
-                            splashRadius: widget.checkBoxProperty?.splashRadius,
-                            materialTapTargetSize:
-                                widget.checkBoxProperty?.materialTapTargetSize,
-                            visualDensity:
-                                widget.checkBoxProperty?.visualDensity,
-                            focusNode: widget.checkBoxProperty?.focusNode,
-                            autofocus:
-                                widget.checkBoxProperty?.autofocus ?? false,
-                            shape: widget.checkBoxProperty?.shape,
-                            side: widget.checkBoxProperty?.side,
-                          ),
-                        ],
+                            Checkbox(
+                              value: multiSelectionValue[index],
+                              onChanged: (value) {
+                                if (value != null) {
+                                  setState(() {
+                                    multiSelectionValue[index] = value;
+                                  });
+                                }
+                              },
+                              tristate:
+                                  widget.checkBoxProperty?.tristate ?? false,
+                              mouseCursor: widget.checkBoxProperty?.mouseCursor,
+                              activeColor: widget.checkBoxProperty?.activeColor,
+                              fillColor: widget.checkBoxProperty?.fillColor,
+                              checkColor: widget.checkBoxProperty?.checkColor,
+                              focusColor: widget.checkBoxProperty?.focusColor,
+                              hoverColor: widget.checkBoxProperty?.hoverColor,
+                              overlayColor:
+                                  widget.checkBoxProperty?.overlayColor,
+                              splashRadius:
+                                  widget.checkBoxProperty?.splashRadius,
+                              materialTapTargetSize: widget
+                                  .checkBoxProperty?.materialTapTargetSize,
+                              visualDensity:
+                                  widget.checkBoxProperty?.visualDensity,
+                              focusNode: widget.checkBoxProperty?.focusNode,
+                              autofocus:
+                                  widget.checkBoxProperty?.autofocus ?? false,
+                              shape: widget.checkBoxProperty?.shape,
+                              side: widget.checkBoxProperty?.side,
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   );
@@ -1194,7 +1209,7 @@ class DropDownValueModel extends Equatable {
   final String name;
   final dynamic value;
 
-  ///as of now only added for multi-selection dropdown
+  ///as of now only added for multiselection dropdown
   final String? toolTipMsg;
 
   const DropDownValueModel(
